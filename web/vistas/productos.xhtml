@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+        <ui:composition template="./../plantillas/principal.xhtml">
+            <ui:define name="content">
+
+                <h:form>
+                    <h3>PRODUCTOS</h3>
+                    <h:panelGrid columns="4">
+                        <p:outputLabel value="Nombre" for="textNombre" style="font-size: 120%"/>                    
+                        <p:inputText id="textNombre"  label="Nombre" value="#{productoMbV.nombre}" style="font-size: 120%"
+                                     maxlength="20" onkeyup="javascript:this.value = this.value.toUpperCase();" >
+                        </p:inputText>
+                        <p:commandButton value="BUCAR" icon="ui-icon-search" style="font-size: 140%" class="btn btn-lg btn-success" actionListener="#{productoMbV.buscarProductoNomre()}" update=":frmListadoProductos:scrProducto"/> 
+                    </h:panelGrid>
+                </h:form>
+                <BR/>
+                <h:form id="frmListadoProductos">
+                    <p:growl id="mensajeGeneral" showDetail="true" sticky="false" />
+                    <p:dataScroller value="#{productoMbV.listProductos}" var="pro" chunkSize="10" id="scrProducto">
+                        <f:facet name="header">
+                            PRODUCTOS
+                        </f:facet>
+                        <f:facet name="loader">
+                            <p:commandButton type="button" value="More" icon="ui-icon-circle-triangle-s"/>
+                        </f:facet>
+                        <h:panelGrid columns="2" style="width:100%">
+                            <h:panelGrid columns="2" >
+                                <p:commandLink class="btn btn-danger" actionListener="#{productoMbV.cargarProductoCliente(pro.idProducto)}">
+                                    <p:graphicImage url="../../resources/imagenes/producto1.png" /> 
+                                </p:commandLink>
+                                <p:outputPanel>
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <h:outputText value="Nombre:" />
+                                        <h:outputText value="#{pro.nombre}" style="font-weight: bold"/>
+                                        <h:outputText value="Descripción:" />
+                                        <h:outputText value="#{pro.descripcion}" style="font-weight: bold"/>
+                                        <h:outputText value="Cantidad:" />
+                                        <h:outputText value="#{pro.cantidad}" style="font-weight: bold"/>
+                                        <h:outputText value="Precio:" />
+                                        <h:outputText value="#{pro.precio}" style="font-weight: bold"/>
+                                    </h:panelGrid>  
+                                </p:outputPanel>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </p:dataScroller>
+                    <p:dialog header="Detalle del Producto" widgetVar="dialogoDetalleproducto" resizable="false" modal="true">
+                        <h:panelGrid id="panelDetalleProducto" columns="2" style="width: 100%">
+                            <p:outputLabel value="Nombre" style="font-size: 120%"/>
+                            <p:outputLabel value="#{productoMbV.producto.nombre}" style="font-size: 120%"/>
+                            <p:outputLabel value="Descripón"  style="font-size: 120%"/>
+                            <p:outputLabel value="#{productoMbV.producto.descripcion}" style="font-size: 120%"/>
+                            <p:outputLabel value="Precio" style="font-size: 120%"/>
+                            <p:outputLabel value="#{productoMbV.producto.precio}" style="font-size: 120%"/>
+                            <p:outputLabel value="Cantidad" style="font-size: 120%"/>
+                            <p:outputLabel value="#{productoMbV.producto.cantidad}" style="font-size: 120%"/>
+                            <h3>
+                                Datos de la Institución
+                            </h3>
+                            <h:panelGroup/>
+                            <p:outputLabel value="Nombre" style="font-size: 120%"/>
+                            <p:outputLabel value="#{productoMbV.producto.local.nombre}" style="font-size: 120%"/>
+                            <p:outputLabel value="Dirección" style="font-size: 120%"/>
+                            <p:outputLabel value="#{productoMbV.producto.local.direccion}" style="font-size: 120%"/>
+                            <p:outputLabel value="Teléfono" style="font-size: 120%"/>
+                            <p:outputLabel value="#{productoMbV.producto.local.telefono}" style="font-size: 120%"/>
+                            <p:outputLabel value="UBICACION" style="font-size: 120%"/>
+                            <p:commandButton value="VER" actionListener="#{productoMbV.cargarMapaProducto()}" rendered="#{productoMbV.habilitarBotonMapa()}" icon="ui-icon-pin-s"/>
+                        </h:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <h:form id="frmMapa">
+                    <p:growl id="mensajeGeneral" showDetail="true" sticky="false" />
+                    <p:dialog id="gmapDialog" widgetVar="dlg" width="625" height="430" modal="true">
+                        <p:gmap id="gmap" center="#{productoMbV.centerGeoMap}" zoom="18" type="HYBRID"  model="#{productoMbV.draggableModel}" style="width:100%;height:400px" />
+                    </p:dialog>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

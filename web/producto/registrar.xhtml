@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../plantillas/propietario.xhtml">
+            <ui:define name="content">
+                <p:panel >
+                    <h2>
+                        Productos Registrados
+                    </h2>
+                    <h:form>
+                        <h:panelGrid columns="5">
+                            <p:commandButton value="Nuevo" icon="ui-icon-contact" style="font-size: 100%" class="btn btn-lg btn-success" onclick="PF('dialogoRegistrarProducto').show()"/> 
+                            <p:outputLabel value="Nombre" for="textNombre" style="font-size: 120%"/>                    
+                            <p:inputText id="textNombre"  label="Nombre" value="#{productoMbV.nombre}" style="font-size: 120%"
+                                         maxlength="20" onkeyup="javascript:this.value = this.value.toUpperCase();" >
+                            </p:inputText>
+                            <p:commandButton value="BUCAR" icon="ui-icon-search" style="font-size: 100%" class="btn btn-lg btn-success" actionListener="#{productoMbV.buscarProducto()}" update=":frmListadoProductos:tablaListaProductos"/> 
+                        </h:panelGrid>
+                    </h:form>
+                    <BR/>
+                    <h:form id="frmListadoProductos">
+                        <p:growl id="mensajeGeneral" showDetail="true" sticky="false" />
+                        <p:dataTable id="tablaListaProductos" var="item" value="#{productoMbV.listProductos}" paginator="true" rows="10" rowKey="#{item.idProducto}" reflow="true">
+                            <f:facet name="header">
+                                PRODUCTOS
+                            </f:facet>
+                            <p:column headerText="Nombre" filterBy="nombre">
+                                <h:outputText value="#{item.nombre}" />
+                            </p:column>
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{item.descripcion}" />
+                            </p:column>
+                            <p:column headerText="Cantidad">
+                                <h:outputText value="#{item.cantidad}" />
+                            </p:column>
+                            <p:column headerText="Presio">
+                                <h:outputText value="#{item.precio}" />
+                            </p:column>
+                            <p:column style="text-align:center">
+                                <p:commandButton actionListener="#{productoMbV.cargarProducto(item.idProducto)}" icon="ui-icon-pencil" title="Editar"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                    <h:form id="frmRegistrarProducto">
+                        <p:dialog header="Registrar Local" widgetVar="dialogoRegistrarProducto" modal="true">
+                            <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+                            <h:panelGrid columns="2" cellpadding="5" >
+                                <p:outputLabel value="Nombres" for="textnombre" style="font-size: 120%"/>                    
+                                <p:inputText id="textnombre"  label="Nombres" value="#{productoMbV.producto.nombre}" style="font-size: 120%"
+                                             maxlength="40" onkeyup="javascript:this.value = this.value.toUpperCase();" required="true">
+                                </p:inputText>
+                                <p:outputLabel value="Descripción" for="texDescripcion" style="font-size: 120%"/>                    
+                                <p:inputTextarea id="texDescripcion"  label="Descripción" value="#{productoMbV.producto.descripcion}" style="font-size: 120%"
+                                                 maxlength="100" >
+                                </p:inputTextarea>
+                                <p:outputLabel value="Cantidad" for="textCantidad" style="font-size: 120%"/>
+                                <p:inputText id="textCantidad" label="Cantidad" value="#{productoMbV.producto.cantidad}" style="font-size: 120%" onkeypress="return justNumbers(event);" required="true"/>
+                                <p:outputLabel value="Precio" for="textPrecio" style="font-size: 120%"/>
+                                <p:inputText id="textPrecio" label="Precio" value="#{productoMbV.producto.precio}" style="font-size: 120%" required="true"/>
+                            </h:panelGrid>
+                            <h:panelGroup>
+                                <p:commandButton value="GUARDAR" ajax="false" actionListener="#{productoMbV.registar()}" class="btn btn-primary" icon="ui-icon-check"/>
+                                <p:commandButton value="CANCELAR" ajax="false" immediate="true" class="btn btn-warning" icon="ui-icon-cancel"/>
+                            </h:panelGroup>
+                        </p:dialog>                        
+                    </h:form>
+                    <h:form id="frmEditarProducto">
+                        <p:dialog header="Registrar Local" widgetVar="dialogoEditarProducto" modal="true">
+                            <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+                            <h:panelGrid columns="2" cellpadding="5" id="editarProducto">
+                                <p:outputLabel value="Nombres" for="textnombre" style="font-size: 120%"/>                    
+                                <p:inputText id="textnombre"  label="Nombres" value="#{productoMbV.producto.nombre}" style="font-size: 120%"
+                                             maxlength="40" onkeyup="javascript:this.value = this.value.toUpperCase();" required="true">
+                                </p:inputText>
+                                <p:outputLabel value="Descripción" for="texDescripcion" style="font-size: 120%"/>                    
+                                <p:inputTextarea id="texDescripcion"  label="Descripción" value="#{productoMbV.producto.descripcion}" style="font-size: 120%"
+                                                 maxlength="100" onkeyup="javascript:this.value = this.value.toUpperCase();">
+                                </p:inputTextarea>
+                                <p:outputLabel value="Cantidad" for="textCantidad" style="font-size: 120%"/>
+                                <p:inputText id="textCantidad" label="Cantidad" value="#{productoMbV.producto.cantidad}" style="font-size: 120%" onkeypress="return justNumbers(event);" required="true"/>
+                                <p:outputLabel value="Precio" for="textPrecio" style="font-size: 120%"/>
+                                <p:inputText id="textPrecio" label="Precio" value="#{productoMbV.producto.precio}" style="font-size: 120%" required="true">
+                                    <f:validator validatorId="validatorDouble"/>
+                                </p:inputText>
+                            </h:panelGrid>
+                            <h:panelGroup>
+                                <p:commandButton value="GUARDAR" ajax="false" actionListener="#{productoMbV.update()}" class="btn btn-primary" icon="ui-icon-check"/>
+                                <p:commandButton value="CANCELAR" ajax="false" immediate="true" class="btn btn-warning" icon="ui-icon-cancel"/>
+                            </h:panelGroup>
+                        </p:dialog>                        
+                    </h:form>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+
+    </body>
+</html>

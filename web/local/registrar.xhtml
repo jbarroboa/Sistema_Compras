@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <body>
+        <ui:composition template="./../plantillas/administrador.xhtml">
+            <ui:define name="content">
+                <p:panel>
+                    <h2>
+                        Locales Registrados
+                    </h2>
+                    <h:form>
+                        <h:panelGrid columns="4">
+                            <p:commandButton value="NUEVO" icon="ui-icon-contact" style="font-size: 100%" class="btn btn-lg btn-success" onclick="PF('dialogoRegistrarLocal').show()"/> 
+                            <p:outputLabel value="Nombre" for="textNombre" style="font-size: 120%"/>                    
+                            <p:inputText id="textNombre"  label="Nombre" value="#{localMbV.nombre}" style="font-size: 120%"
+                                         maxlength="20" onkeyup="javascript:this.value = this.value.toUpperCase();" >
+                            </p:inputText>
+                            <p:commandButton value="BUCAR" icon="ui-icon-search" style="font-size: 100%" class="btn btn-lg btn-success" actionListener="#{localMbV.buscarLocal()}" update=":frmListadoLocales:tablaListaLocales"/> 
+                        </h:panelGrid>
+                    </h:form>
+                    <BR/>
+                    <h:form id="frmListadoLocales">
+                        <p:growl id="mensajeGeneral" showDetail="true" sticky="false" />
+                        <p:dataTable id="tablaListaLocales" var="item" value="#{localMbV.listLocals}" paginator="true" rows="10" rowKey="#{item.idLocal}" reflow="true">
+                            <f:facet name="header">
+                                LOCALES
+                            </f:facet>  
+                            <p:column headerText="Nombre" filterBy="cedula">
+                                <h:outputText value="#{item.nombre}" />
+                            </p:column>
+                            <p:column headerText="Correo">
+                                <h:outputText value="#{item.correo}" />
+                            </p:column>
+                            <p:column headerText="Dirección">
+                                <h:outputText value="#{item.direccion}" />
+                            </p:column>
+                            <p:column headerText="Tipo" filterBy="tipo">
+                                <h:outputText value="#{item.tipo}" />
+                            </p:column>
+                            <p:column style="text-align:center">
+                                <p:commandButton actionListener="#{localMbV.cargarLocal(item.idLocal)}" icon="ui-icon-pencil" title="Editar"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                    <h:form id="frmRegistrarLocal">
+                        <p:dialog header="Registrar Local" widgetVar="dialogoRegistrarLocal" modal="true">
+                            <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+                            <h:panelGrid columns="2" cellpadding="5" >
+                                <p:outputLabel value="Nombres" for="textnombreCo" style="font-size: 120%"/>                    
+                                <p:inputText id="textnombreCo"  label="NombreCo" value="#{localMbV.local.nombre}" style="font-size: 120%"
+                                             maxlength="40" onkeyup="javascript:this.value = this.value.toUpperCase();" required="true">
+                                </p:inputText>
+                                <p:outputLabel value="Correo Electronico" for="textcorreo" style="font-size: 120%"/>
+                                <p:inputText id="textcorreo" label="Correo Electronico" value="#{localMbV.local.correo}" style="font-size: 120%" maxlength="40">
+                                    <f:validator validatorId="validatorEmail"/>
+                                </p:inputText>
+                                <p:outputLabel value="Telefono" for="textTelefono" style="font-size: 120%"/>
+                                <p:inputText id="textTelefono" label="Telefono" value="#{localMbV.local.telefono}" maxlength="10" style="font-size: 120%" onkeypress="return justNumbers(event);" />
+                                <p:outputLabel value="Direccion" for="textDireccion" style="font-size: 120%"/>                    
+                                <p:inputTextarea id="textDireccion"  label="Direccion" value="#{localMbV.local.direccion}" style="font-size: 120%" maxlength="100" required="true"/>
+                                <p:outputLabel value="Ubicación Mapa" style="font-size: 120%"/>    
+                                <p:commandButton id="btn" icon="ui-icon-pin-s" value="Show Map" onclick="PF('dlg').show()" immediate="true"/>
+                                <p:outputLabel value="Tipo" style="font-size: 120%" />
+                                <h:selectOneMenu value="#{localMbV.local.tipo}" style="font-size: 120%" required="true">
+                                    <f:selectItems value="#{localMbV.tipo}"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+                            <h4>
+                                DATOS DE LA PERSONA
+                            </h4>
+                            <h:panelGrid columns="2" cellpadding="5" >
+                                <p:outputLabel value="Cédula" for="txtCedula" style="font-size: 120%"/>                                    
+                                <p:inputText  id="txtCedula" value="#{localMbV.usuario.cedula}" style="font-size: 120%"
+                                              required="true" requiredMessage="Error: Cedula requerido"  maxlength="10" onkeypress="return justNumbers(event);">
+                                    <f:validateLength minimum="10"></f:validateLength>
+                                </p:inputText>
+                                <p:outputLabel value="Nombres" for="textNombres" style="font-size: 120%"/>                    
+                                <p:inputText id="textNombres"  label="Nombres" value="#{localMbV.persona.nombres}" style="font-size: 120%"
+                                             maxlength="20" onkeyup="javascript:this.value = this.value.toUpperCase();" required="true">
+                                </p:inputText>
+                                <p:outputLabel value="Apellidos" for="textApellidos" style="font-size: 120%"/>                    
+                                <p:inputText id="textApellidos"  label="Apellidos" value="#{localMbV.persona.apellidos}" style="font-size: 120%"
+                                             maxlength="20" onkeyup="javascript:this.value = this.value.toUpperCase();" required="true">
+                                </p:inputText>
+                                <p:outputLabel value="Telefono" for="textTelefonoU" style="font-size: 120%"/>
+                                <p:inputText id="textTelefonoU" label="Telefono" value="#{localMbV.persona.telefono}" maxlength="10" style="font-size: 120%" onkeypress="return justNumbers(event);" />
+                                <p:outputLabel value="Clave" for="pwd1" style="font-size: 120%"/>
+                                <p:password id="pwd1" label="Password 1" value="#{localMbV.usuario.clave}" match="pwd2" feedback="true" promptLabel="Por favor, introduzca una contraseña" weakLabel="débil"
+                                            style="font-size: 120%" goodLabel="Buena" strongLabel="Fuerte" validatorMessage="Error: No coincide la contraseña, verifique e ingrese de nuevo" required="true"/>
+                                <p:outputLabel for="pwd2" value="Verificar Clave" style="font-size: 120%"/>
+                                <p:password id="pwd2" value="#{localMbV.usuario.clave}" label="Password 2" style="font-size: 120%"/>
+                            </h:panelGrid>
+                            <h:panelGroup>
+                                <p:commandButton value="GUARDAR" ajax="false" actionListener="#{localMbV.registar()}" class="btn btn-primary" icon="ui-icon-check"/>
+                                <p:commandButton value="CANCELAR" ajax="false" immediate="true" class="btn btn-warning" icon="ui-icon-cancel"/>
+                            </h:panelGroup>
+                        </p:dialog>                        
+                    </h:form>
+                    <h:form id="frmEditarLocal">
+                        <p:dialog header="Editar Local" widgetVar="dialogoEditarLocal" modal="true">
+                            <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+                            <h:panelGrid columns="2" cellpadding="5" >
+                                <p:outputLabel value="Nombres" for="textnombreCo" style="font-size: 120%"/>                    
+                                <p:inputText id="textnombreCo"  label="NombreCo" value="#{localMbV.local.nombre}" style="font-size: 120%"
+                                             maxlength="40" onkeyup="javascript:this.value = this.value.toUpperCase();" required="true">
+                                </p:inputText>
+                                <p:outputLabel value="Correo Electronico" for="textcorreo" style="font-size: 120%"/>
+                                <p:inputText id="textcorreo" label="Correo Electronico" value="#{localMbV.local.correo}" style="font-size: 120%" maxlength="40">
+                                    <f:validator validatorId="validatorEmail"/>
+                                </p:inputText>
+                                <p:outputLabel value="Telefono" for="textTelefono" style="font-size: 120%"/>
+                                <p:inputText id="textTelefono" label="Telefono" value="#{localMbV.local.telefono}" maxlength="10" style="font-size: 120%" onkeypress="return justNumbers(event);" />
+                                <p:outputLabel value="Ubicación Mapa" style="font-size: 120%"/>    
+                                <p:commandButton id="btn" icon="ui-icon-pin-s" value="Show Map" immediate="true" actionListener="#{localMbV.cargarMapEdit()}"/>
+                                <p:outputLabel value="Direccion" for="textDireccion" style="font-size: 120%"/>                    
+                                <p:inputTextarea id="textDireccion"  label="Direccion" value="#{localMbV.local.direccion}" style="font-size: 120%" maxlength="100" required="true"/>
+                                <p:outputLabel value="Tipo" style="font-size: 120%" />
+                                <h:selectOneMenu value="#{localMbV.local.tipo}" style="font-size: 120%" required="true">
+                                    <f:selectItems value="#{localMbV.tipo}"/>
+                                </h:selectOneMenu>
+                            </h:panelGrid>
+                            <h4>
+                                DATOS DE LA PERSONA
+                            </h4>
+                            <h:panelGrid columns="2" cellpadding="5" >
+                                <p:outputLabel value="Cédula" for="txtCedula" style="font-size: 120%"/>                                    
+                                <p:inputText  id="txtCedula" value="#{localMbV.usuario.cedula}" style="font-size: 120%"
+                                              required="true" requiredMessage="Error: Cedula requerido"  maxlength="10" onkeypress="return justNumbers(event);">
+                                    <f:validateLength minimum="10"></f:validateLength>
+                                </p:inputText>
+                                <p:outputLabel value="Nombres" for="textNombres" style="font-size: 120%"/>                    
+                                <p:inputText id="textNombres"  label="Nombres" value="#{localMbV.persona.nombres}" style="font-size: 120%"
+                                             maxlength="20" onkeyup="javascript:this.value = this.value.toUpperCase();" required="true">
+                                </p:inputText>
+                                <p:outputLabel value="Apellidos" for="textApellidos" style="font-size: 120%"/>                    
+                                <p:inputText id="textApellidos"  label="Apellidos" value="#{localMbV.persona.apellidos}" style="font-size: 120%"
+                                             maxlength="20" onkeyup="javascript:this.value = this.value.toUpperCase();" required="true">
+                                </p:inputText>
+                                <p:outputLabel value="Telefono" for="textTelefonoU" style="font-size: 120%"/>
+                                <p:inputText id="textTelefonoU" label="Telefono" value="#{localMbV.persona.telefono}" maxlength="10" style="font-size: 120%" onkeypress="return justNumbers(event);" />
+                                <p:outputLabel value="Clave" for="pwd1" style="font-size: 120%"/>
+                                <p:password id="pwd1" label="Password 1" value="#{localMbV.clave}" match="pwd2" feedback="true" promptLabel="Por favor, introduzca una contraseña" weakLabel="débil"
+                                            style="font-size: 120%" goodLabel="Buena" strongLabel="Fuerte" validatorMessage="Error: No coincide la contraseña, verifique e ingrese de nuevo" />
+                                <p:outputLabel for="pwd2" value="Verificar Clave" style="font-size: 120%"/>
+                                <p:password id="pwd2" value="#{localMbV.clave}" label="Password 2" style="font-size: 120%"/>
+                            </h:panelGrid>
+                            <h:panelGroup>
+                                <p:commandButton value="GUARDAR" ajax="false" actionListener="#{localMbV.update()}" class="btn btn-primary" icon="ui-icon-check"/>
+                                <p:commandButton value="CANCELAR" ajax="false" immediate="true" class="btn btn-warning" icon="ui-icon-cancel" />
+                            </h:panelGroup>
+                        </p:dialog>                        
+                    </h:form>
+                    <h:form id="frmMapa">
+                        <p:dialog id="gmapDialog" widgetVar="dlg" width="625" height="430" modal="true">
+                            <p:gmap id="gmap" center="#{localMbV.centerGeoMap}" zoom="15" type="HYBRID"  model="#{localMbV.draggableModel}" style="width:100%;height:400px">
+                                <p:ajax event="markerDrag" listener="#{localMbV.onMarkerDrag}" />
+                            </p:gmap>
+                            <p:commandButton type="button" value="ACEPTAR" icon="ui-icon-check" onclick="PF('dlg').hide()"/>
+                            <p:commandButton value="CANCELAR" class="btn btn-warning" icon="ui-icon-cancel" onclick="PF('dlg').hide()" actionListener="#{localMbV.cancelar()}"/>
+                        </p:dialog>
+                    </h:form>
+                </p:panel>
+            </ui:define>
+        </ui:composition>
+
+    </body>
+</html>

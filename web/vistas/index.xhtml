@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+        <ui:composition template="./../plantillas/principal.xhtml">
+            <ui:define name="content" >
+                <div align="center">
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <h:form id="frmLogin">
+                        <p:panel header="Iniciar Sesión" footer="Movie Details" class="loginDatos">
+
+                            <p:growl id="mensajeGeneral" showDetail="true" sticky="false"/>
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <h:outputLabel for="username" value="Username:" />
+                                <p:inputText id="username" value="#{loginMbV.cedula}" required="true" label="username" maxlength="10"/>
+                                <h:outputLabel for="password" value="Password:" />
+                                <p:password id="password" value="#{loginMbV.clave}" required="true" label="password" />
+                            </h:panelGrid>
+                            <f:facet name="footer" >
+                                <p:commandButton value="Login" update="frmLogin" action="#{loginMbV.login()}" ajax="false" />
+                            </f:facet> 
+
+                        </p:panel>
+                    </h:form>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                </div>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
